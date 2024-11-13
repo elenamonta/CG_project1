@@ -217,6 +217,12 @@ int main(void)
 		glDeleteBuffers(1, &platforms[i].VBO_colors);
 		glDeleteVertexArrays(1, &platforms[i].VAO);
 	}
+
+	for (int j = 0; j < bouncings.size(); j++) {
+		glDeleteBuffers(1, &bouncings[j].VBO_vertices);
+		glDeleteBuffers(1, &bouncings[j].VBO_colors);
+		glDeleteVertexArrays(1, &bouncings[j].VAO);
+	}
 	
 	
 
