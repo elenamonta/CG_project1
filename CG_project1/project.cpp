@@ -20,14 +20,15 @@ int height = 800, width = 800, speed, nPlatform = 6;
 unsigned int programId, programIdS;
 float r = 0.0f, g = 0.0f, b = 0.0f, deltaTime = 0.0f, lastFrame, alpha, raggio = 1.0f, timeAcc, direction = 0.0f, velocity = 1.0f;
 float Tens = 0.0, Bias = 0.0, Cont = 0.0, step_t;
-float* t;
+float* t; int counter=0;
 
 mat4 Projection;
 vec2 resolution;
 Figura background;
 GLuint MatProj, MatModel, MatProjS, MatModelS, vec_resS, loc_time, loc_speed;
-Curva player = {}, platform = {}, highest = {};
+Curva player = {}, highest = {};
 vector<Curva> platforms;
+vector<Curva> bouncings;
 
 int main(void)
 {
@@ -74,28 +75,25 @@ int main(void)
 	player.position.y = height / 5.0;
 	player.isalive = true; 
 	player.scale = vec3(30.0, 30.0, 30.0); 
-	INIT_FORMA(&player, "mycurve.txt");
+	INIT_FORMA(&player, "mycurve.txt", GL_TRIANGLE_FAN);
 	INIT_VAO_Curva(&player);
-	
-	platform.programId = programId;
-	platform.scale = vec3(20.0, 20.0, 20.0);
-	INIT_FORMA(&platform, "platform_punte.txt");
-	platform.position.y = player.position.y - (((player.max_BB_obj.y - player.min_BB_obj.y) / 2) * player.scale.y) - (((platform.max_BB_obj.y - platform.min_BB_obj.y) / 2) * platform.scale.y);
-	//std::cout << platform.position.y << " " << player.position.y << std::endl;
-	platform.position.x = player.position.x; 
-	INIT_VAO_Curva(&platform);
-	platforms.push_back(platform);
 
-
-	for (int i = 0; i < nPlatform - 1; i++) {
+	for (int i = 0; i < nPlatform; i++) {
+		Curva platform = {};
 		platform.programId = programId;
-		INIT_FORMA(&platform, "platform_punte.txt");
-		platform.position.y = platforms[platforms.size() - 1].position.y + (height / 5.0f);
-		platform.position.x = randomx(platform);
+		platform.scale = vec3(20.0, 20.0, 20.0);
+		INIT_FORMA(&platform, "platform_punte.txt", GL_TRIANGLE_FAN);
+		if (i == 0) {
+			platform.position.y = player.position.y - (((player.max_BB_obj.y - player.min_BB_obj.y) / 2) * player.scale.y) - (((platform.max_BB_obj.y - platform.min_BB_obj.y) / 2) * platform.scale.y);
+			platform.position.x = player.position.x;
+		}
+		else {
+			platform.position.y = platforms[platforms.size() - 1].position.y + (height / 5.0f);
+			platform.position.x = randomx(platform);
+		}
 		INIT_VAO_Curva(&platform);
 		platforms.push_back(platform);
 	}
-
 
 	Projection = ortho(0.0f, float(width), 0.0f, float(height));
 	resolution = vec2(float(height), float(width));
@@ -116,12 +114,15 @@ int main(void)
 	while (!glfwWindowShouldClose(window))
 	{
 		float currentFrame = glfwGetTime();
-		
+		int outOfBoundPlatformNum = 0;
+		int outOfBoundBouncNum = 0;
 
 		if (velocity < 0) {
 			if (checkCollision_platform(player, platforms)) {
-				jump();
-				direction = 0.0; 
+				velocity = 8;
+				if (checkCollision_platform(player, bouncings)) {
+					velocity *= 2;
+				}
 			}
 		}
 		
@@ -132,16 +133,58 @@ int main(void)
 		}
 		
 		if (player.position.y >= height / 2) {
-			player.position.y -= abs(velocity); 
-			for (int i = 0; i < platforms.size(); i++) {
-				platforms[i].position.y -= abs(velocity);
-				if (outOfBound(platforms[i])) {
-					highest = higher_platform(platforms);
-
-					platforms[i].position.y = highest.position.y + (height / 5.0f);
-					platforms[i].position.x = randomx(platforms[i]);
-					
+			player.position.y -= velocity; 
+			for (int j = 0; j < bouncings.size(); j++) {
+				bouncings[j].position.y -= velocity;
+				if (outOfBound(bouncings[j])) {
+					outOfBoundBouncNum++;
 				}
+			}
+
+			while (outOfBoundPlatformNum > 0) {
+				bouncings.erase(bouncings.begin());
+				outOfBoundBouncNum--;
+			}
+
+
+			for (int i = 0; i < platforms.size(); i++) {
+				platforms[i].position.y -= velocity;
+
+				if (outOfBound(platforms[i])) {
+					outOfBoundPlatformNum++;
+				}
+			}
+
+			while (outOfBoundPlatformNum > 0) {
+
+				highest = higher_platform(platforms);
+				platforms.erase(platforms.begin());
+
+				Curva platform = {};
+				platform.programId = programId;
+				platform.scale = vec3(20.0, 20.0, 20.0);
+				INIT_FORMA(&platform, "platform_punte.txt", GL_TRIANGLE_FAN);
+				platform.position.y = highest.position.y + (height / 5.0f);
+				platform.position.x = randomx(platform);
+				INIT_VAO_Curva(&platform);
+				platforms.push_back(platform);
+
+				counter++;
+
+				if (counter == 3) {
+					counter = 0;
+
+					Curva molla = {};
+					molla.programId = programId;
+					molla.scale = vec3(100.0, 100.0, 100.0);
+					INIT_FORMA(&molla, "molla.txt", GL_LINE_STRIP);
+					molla.position.x = platforms[platforms.size() - 1].position.x;
+					molla.position.y = platforms[platforms.size() - 1].position.y - (molla.min_BB_obj.y * molla.scale.y - platforms[platforms.size() - 1].max_BB_obj.y * platforms[platforms.size() - 1].scale.y);
+					INIT_VAO_Curva(&molla);
+					bouncings.push_back(molla);
+				}
+
+				outOfBoundPlatformNum--;
 			}
 		}
 

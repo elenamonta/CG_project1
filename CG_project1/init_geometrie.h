@@ -8,4 +8,4 @@
 
 #include "strutture.h"
 void INIT_PIANO(Figura* fig);
-void INIT_FORMA(Curva* curva, const char * filename);
+void INIT_FORMA(Curva* curva, const char * filename, int render);

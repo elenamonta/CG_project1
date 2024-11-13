@@ -5,6 +5,8 @@ extern float direction;
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
+
+    direction = 0.0;
     switch (key) 
     {
     case GLFW_KEY_ESCAPE:
@@ -13,10 +15,10 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
         break;
 
     case GLFW_KEY_RIGHT:
-        if (action == GLFW_PRESS) direction = 3.0f;
+        if (action == GLFW_PRESS) direction = 4.0f;
         break; 
     case GLFW_KEY_LEFT:
-        if (action == GLFW_PRESS) direction = -3.0f;
+        if (action == GLFW_PRESS) direction = -4.0f;
         break;
 
     default:

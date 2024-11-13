@@ -1,14 +1,10 @@
 #pragma once
 #include "strutture.h"
 extern float Tens, Bias, Cont;
-//extern bool visualizzaTg;
-
 int pval = 200;
 bool firstInsert = true;
+const vec3 NULL_CENTER = vec3(0.0,0.0,0.0);
 
-
-/// /////////////////////////////////// Disegna geometria //////////////////////////////////////
-//Per Curve di hermite
 #define PHI0(t)  (2.0*t*t*t-3.0*t*t+1)
 #define PHI1(t)  (t*t*t-2.0*t*t+t)
 #define PSI0(t)  (-2.0*t*t*t+3.0*t*t)
@@ -42,9 +38,6 @@ float dy(int i, float* t, float Tens, float Bias, float Cont, Curva* curva)
 
 float DX(int i, float* t, Curva* curva)
 {
-	//Nei vertici di controllo per i quali non sono stati modificati i parametri Tens, Bias, Cont il valore della derivata della componente x della curva è quello originale, altrimenti è quello che è stato modificato nella funzione 
-	//keyboardfunc  in seguito alla modifica dei valori Tens, Bias e Cont.
-
 	if (curva->Derivata.at(i).x == 0)
 		return dx(i, t, 0.0, 0.0, 0.0, curva);
 
@@ -55,9 +48,6 @@ float DX(int i, float* t, Curva* curva)
 
 float DY(int i, float* t, Curva* curva)
 {
-	// Nei vertici di controllo per i quali non sono stati modificati i parametri Tens, Bias, Cont il valore della derivata della componente y della curva è quello originale, altrimenti è quello che è stato modificato nella funzione
-		//keyboardfunc  in seguito alla modifica dei valori Tens, Bias e Cont.
-
 	if (curva->Derivata.at(i).y == 0)
 		return dy(i, t, 0.0, 0.0, 0.0, curva);
 
@@ -65,68 +55,6 @@ float DY(int i, float* t, Curva* curva)
 		return curva->Derivata.at(i).y;
 
 }
-
-//void InterpolazioneHermite(float* t, Curva* curva, vec4 color_top)
-//{
-//	float p_t = 0, p_b = 0, p_c = 0, x, y;
-//	float passotg = 1.0 / (float)(pval - 1);
-//	int j;
-//
-//	//curva->vertices.push_back(curva->CP[0]);
-//	//curva->colors.push_back(color_top);
-//	float tg = 0, tgmapp, ampiezza;
-//	int i = 0;
-//	int is = 0; //indice dell'estremo sinistro dell'intervallo [t(i),t(i+1)] a cui il punto tg
-//	//appartiene
-//
-//	for (tg = 0; tg <= 1; tg += passotg)
-//	{
-//		//Localizzo l'intervallo a cui tg appartiente
-//		if (tg > t[is + 1]) is++;
-//
-//		ampiezza = (t[is + 1] - t[is]);
-//
-//		//mappo tg nell'intervallo [0,1]
-//
-//		tgmapp = (tg - t[is]) / ampiezza;
-//
-//		x = curva->CP[is].x * PHI0(tgmapp) + DX(is, t, curva) * PHI1(tgmapp) * ampiezza + curva->CP[is + 1].x * PSI0(tgmapp) + DX(is + 1, t, curva) * PSI1(tgmapp) * ampiezza;
-//		y = curva->CP[is].y * PHI0(tgmapp) + DY(is, t, curva) * PHI1(tgmapp) * ampiezza + curva->CP[is + 1].y * PSI0(tgmapp) + DY(is + 1, t, curva) * PSI1(tgmapp) * ampiezza;
-//		
-//		if (firstInsert) {
-//			firstInsert = false;
-//		}
-//		else {
-//			curva->vertices.push_back(vec3(x, y, 0.0));
-//			curva->colors.push_back(color_top);
-//			curva->nv = curva->vertices.size();
-//		}
-//
-//	}
-//	
-//	curva->vertices.push_back(curva->vertices[0]);
-//	curva->colors.push_back(color_top);
-//	curva->nv = curva->vertices.size();
-//
-//	/*for (int k = 0; k < curva->vertices.size(); k++) {
-//		std::cout << curva->vertices[k].x << ", " << curva->vertices[k].y << std::endl;
-//	}
-//
-//	std::cout << " " << std::endl;*/
-//
-//}
-
-//void CostruisciHermite(float* t, Curva* curva, vec4 color_top)
-//{
-//	firstInsert = true;
-//	curva->vertices.clear();
-//	curva->colors.clear();
-//	curva->tg.clear();
-//
-//
-//	InterpolazioneHermite(t, curva, color_top);
-//	
-//}
 
 void InterpolazioneHermite(float* t, Curva* curva, vec3 centro, vec4 color_top, vec4 color_bot)
 {
@@ -136,20 +64,16 @@ void InterpolazioneHermite(float* t, Curva* curva, vec3 centro, vec4 color_top, 
 
 	curva->vertices.push_back(centro);
 	curva->colors.push_back(color_bot);
+	
 	float tg = 0, tgmapp, ampiezza;
 	int i = 0;
-	int is = 0; //indice dell'estremo sinistro dell'intervallo [t(i),t(i+1)] a cui il punto tg
-	//appartiene
+	int is = 0; 
 
 	for (tg = 0; tg <= 1; tg += passotg)
 	{
-		//Localizzo l'intervallo a cui tg appartiente
 		if (tg > t[is + 1]) is++;
 
 		ampiezza = (t[is + 1] - t[is]);
-
-		//mappo tg nell'intervallo [0,1]
-
 		tgmapp = (tg - t[is]) / ampiezza;
 
 		x = curva->CP[is].x * PHI0(tgmapp) + DX(is, t, curva) * PHI1(tgmapp) * ampiezza + curva->CP[is + 1].x * PSI0(tgmapp) + DX(is + 1, t, curva) * PSI1(tgmapp) * ampiezza;
@@ -160,12 +84,9 @@ void InterpolazioneHermite(float* t, Curva* curva, vec3 centro, vec4 color_top, 
 		curva->nv = curva->vertices.size();
 
 	}
-	curva->vertices[curva->vertices.size() - 1] = curva->vertices[1]; 
-	/*for (int k = 0; k < curva->vertices.size(); k++) {
-		std::cout << curva->vertices[k].x << ", " << curva->vertices[k].y << std::endl;
-	}
-
-	std::cout << " " << std::endl; */
+	
+	curva->vertices[curva->vertices.size() - 1] = curva->vertices[1];
+	
 }
 
 void CostruisciHermite(float* t, Curva* curva, vec3 centro, vec4 color_top)
@@ -173,9 +94,8 @@ void CostruisciHermite(float* t, Curva* curva, vec3 centro, vec4 color_top)
 	curva->vertices.clear();
 	curva->colors.clear();
 	curva->tg.clear();
-	//vec4 color_top = vec4(0.58, 0.29, 0.0, 1.0);
-	vec4 color_bot = vec4(0.0, 0.0, 0.0, 1.0);
-
+	
+	vec4 color_bot = vec4(color_top.r*0.4, color_top.g*0.4, color_top.b*0.4, 1.0); 
 
 	InterpolazioneHermite(t, curva, centro, color_top, color_bot);
 	curva->vertices.push_back(centro);

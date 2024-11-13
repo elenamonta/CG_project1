@@ -11,5 +11,5 @@ void updateBB(Figura* fig);
 void updateBB_Curva(Curva* fig);
 bool outOfBound(Curva obj);
 void updatePlayer(Curva* player);
-void jump(); 
 Curva higher_platform(vector<Curva> platforms);
+int generateRand();

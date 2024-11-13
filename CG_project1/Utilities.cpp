@@ -13,6 +13,13 @@ vec2 randomPosition() {
     return glm::vec2(disX(gen), disY(gen));
 }
 
+int generateRand() {
+    static std::random_device rd;
+    static std::mt19937 gen(rd());
+    std::uniform_int_distribution<int> disX(0, 9);
+    return disX(gen);
+}
+
 float randomx(Curva platform) {
     static std::random_device rd;
     static std::mt19937 gen(rd());
@@ -142,20 +149,19 @@ void updatePlayer(Curva* player) {
     velocity -= 0.1f; 
     player->position.x += direction; 
     player->position.y += velocity; 
-    if (player->max_BB.x > width) {
-        player->position.x = width - (player->max_BB.x - player->min_BB.x)/2; 
+    if (player->max_BB.x > width + 1) {
+        player->position.x = width - ((player->max_BB.x - player->min_BB.x) / 2);
     }
-    if (player->max_BB.x < 0) {
+    if (player->min_BB.x < 0) {
         player->position.x = (player->max_BB.x - player->min_BB.x) / 2;
     }
     if (player->min_BB.y < 0) {
         player->isalive = false; 
     } 
+    updateBB_Curva(player); 
 }
 
-void jump() {
-    velocity = 8; 
-}
+
 
 Curva higher_platform(vector<Curva> platforms) {
     Curva higher = {};

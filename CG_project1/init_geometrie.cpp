@@ -3,11 +3,11 @@
 #include "strutture.h"
 #include "Utilities.h"
 #include "gestione_curve.h"
-#include "Utilities.h"
 
 #define _CRT_SECURE_NO_WARNINGS
 #define PI 3.14159265358979323
 extern float alpha;
+const vec3 NULL_CENTER = vec3(0.0,0.0,0.0);
 
 void INIT_PIANO(Figura* fig)
 {
@@ -40,7 +40,7 @@ void INIT_PIANO(Figura* fig)
      
  }
 
-void INIT_FORMA(Curva* curva, const char* filename)
+void INIT_FORMA(Curva* curva, const char* filename, int render)
 {
     float* t;
     float step_t;
@@ -106,17 +106,24 @@ void INIT_FORMA(Curva* curva, const char* filename)
         sumz += curva->CP[i].z;
     }
     vec3 centro = vec3(sumx/curva->CP.size(), sumy / curva->CP.size(), 0.0);
+    /*if (!with_center) {
+        centro = NULL_CENTER;
+    }*/
     
     CostruisciHermite(t, curva, centro, curva->colorVertices);
     findBB_Curva(curva);
 
 
+    /*if (centro != NULL_CENTER) {
+        curva->nv = curva->vertices.size();
+        curva->render = GL_TRIANGLE_FAN;
+    }
+    else {
+        curva->nv = curva->vertices.size();
+        curva->render = GL_LINE_STRIP;
+    }*/
 
     curva->nv = curva->vertices.size();
-    curva->render = GL_TRIANGLE_FAN;
-
-    curva->nv = curva->vertices.size();
-    curva->render = GL_TRIANGLE_FAN;
-
+    curva->render = render;
 }
 

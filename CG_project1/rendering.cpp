@@ -12,8 +12,8 @@ extern mat4 Projection;
 extern vec2 resolution;
 extern vec3 centro; 
 extern Figura background;
-extern Curva player; 
-extern vector<Curva> platforms;
+extern Curva player, molla; 
+extern vector<Curva> platforms, bouncings;
 
 
 
@@ -40,6 +40,35 @@ void render(float currentFrame)
 
 
 void renderCurva() {
+
+    for (int i = 0; i < platforms.size(); i++) {
+        glUseProgram(platforms[i].programId);
+        glUniformMatrix4fv(MatProj, 1, GL_FALSE, value_ptr(Projection));
+        platforms[i].Model = mat4(1.0);
+        platforms[i].Model = translate(platforms[i].Model, vec3(platforms[i].position.x, platforms[i].position.y, 0.0));
+        platforms[i].Model = scale(platforms[i].Model, platforms[i].scale);
+        glUniformMatrix4fv(MatModel, 1, GL_FALSE, value_ptr(platforms[i].Model));
+        glBindVertexArray(platforms[i].VAO);
+
+        updateBB_Curva(&platforms[i]);
+        glDrawArrays(platforms[i].render, 0, platforms[i].nv);
+
+    }
+
+    for (int j = 0; j < bouncings.size(); j++) {
+        glUseProgram(bouncings[j].programId);
+        glUniformMatrix4fv(MatProj, 1, GL_FALSE, value_ptr(Projection));
+        bouncings[j].Model = mat4(1.0);
+        bouncings[j].Model = translate(bouncings[j].Model, vec3(bouncings[j].position.x, bouncings[j].position.y, 0.0));
+        bouncings[j].Model = scale(bouncings[j].Model, bouncings[j].scale);
+        glUniformMatrix4fv(MatModel, 1, GL_FALSE, value_ptr(bouncings[j].Model));
+        glBindVertexArray(bouncings[j].VAO);
+
+        updateBB_Curva(&bouncings[j]);
+        glLineWidth(2.0f);
+        glDrawArrays(bouncings[j].render, 1, bouncings[j].nv - 5);
+    }
+
     if (player.isalive) {
         glUseProgram(player.programId);
         glUniformMatrix4fv(MatProj, 1, GL_FALSE, value_ptr(Projection));
@@ -52,22 +81,6 @@ void renderCurva() {
         updateBB_Curva(&player);
         glDrawArrays(player.render, 0, player.nv);
     }
-    
-
-    for (int i = 0; i < platforms.size(); i++) {
-        platforms[i].Model = mat4(1.0);
-        platforms[i].Model = translate(platforms[i].Model, vec3(platforms[i].position.x, platforms[i].position.y, 0.0));
-        platforms[i].Model = scale(platforms[i].Model, platforms[i].scale);
-        glUniformMatrix4fv(MatModel, 1, GL_FALSE, value_ptr(platforms[i].Model));
-        glBindVertexArray(platforms[i].VAO);
-
-        updateBB_Curva(&platforms[i]);
-        glDrawArrays(platforms[i].render, 0, platforms[i].nv);
-
-    }
-
-    
-    
 
 }
 
