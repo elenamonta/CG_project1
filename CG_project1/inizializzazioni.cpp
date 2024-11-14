@@ -4,7 +4,7 @@
 #include "strutture.h"
 #include "inizializzazioni.h"
 
-extern unsigned int programId, programIdS;
+extern unsigned int programId, programIdS, programId_text, VAO_Text, VBO_Text;
 
 void INIT_SHADER(void)
 {
@@ -19,10 +19,10 @@ void INIT_SHADER(void)
     fragmentShader = (char*)"fragmentShaderSf.glsl";
     programIdS = ShaderMaker::createProgram(vertexShader, fragmentShader);
 
-    /*vertexShader = (char*)"VertexShader_Text.glsl";
+    vertexShader = (char*)"VertexShader_Text.glsl";
     fragmentShader = (char*)"FragmentShader_Text.glsl";
 
-    programId_text = ShaderMaker::createProgram(vertexShader, fragmentShader);*/
+    programId_text = ShaderMaker::createProgram(vertexShader, fragmentShader);
 }
 
 void INIT_VAO(Figura* fig)
@@ -105,16 +105,17 @@ void INIT_VAO_Curva(Curva* fig)
 
 }
 
-//void INIT_VAO_Text(Text *text) {
-//    glGenVertexArrays(1, &text->VAO_Text);
-//    glGenBuffers(1, &text->VBO_Text);
-//    glBindVertexArray(text->VAO_Text);
-//    glBindBuffer(GL_ARRAY_BUFFER, text->VBO_Text);
-//    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 6 * 4, NULL, GL_DYNAMIC_DRAW);
-//
-//    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(float), 0);
-//    glEnableVertexAttribArray(0);
-//
-//    glBindBuffer(GL_ARRAY_BUFFER, 0);
-//    glBindVertexArray(0);
-//}
+void INIT_VAO_Text(void)
+{
+
+    // configure VAO/VBO for texture quads
+    // -----------------------------------
+    glGenVertexArrays(1, &VAO_Text);
+    glGenBuffers(1, &VBO_Text);
+    glBindVertexArray(VAO_Text);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO_Text);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 6 * 4, NULL, GL_DYNAMIC_DRAW);
+
+    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(float), 0);
+    glEnableVertexAttribArray(0);
+}

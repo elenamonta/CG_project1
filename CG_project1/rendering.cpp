@@ -5,7 +5,7 @@
 #include "gestione_curve.h"
 
 extern float r, g, b;
-extern unsigned int MatProjS, MatModelS, MatProj, MatModel, vec_resS, loc_time, loc_speed, loc_platform;
+extern unsigned int MatProjS, MatModelS, MatProj, MatModel, vec_resS, loc_time, loc_speed, loc_platform, programId_text, VAO_Text, VBO_Text, MatProjText, text_color;
 extern int  height, width, speed, nPlatform;
 extern float deltaTime;
 extern mat4 Projection;
@@ -14,7 +14,7 @@ extern vec3 centro;
 extern Figura background;
 extern Curva player, molla; 
 extern vector<Curva> platforms, bouncings;
-
+extern map<char, Glyph> Characters;
 
 
 void render(float currentFrame)
@@ -37,7 +37,6 @@ void render(float currentFrame)
     glDrawArrays(background.render, 0, background.nv);
 
 }
-
 
 void renderCurva() {
 
@@ -84,4 +83,43 @@ void renderCurva() {
 
 }
 
+void RenderText(const std::string& text, Glyph glyph) {
+    glUseProgram(programId_text);
+    glUniformMatrix4fv(MatProjText, 1, GL_FALSE, glm::value_ptr(Projection));
 
+    glUniform3f(text_color, glyph.color.x, glyph.color.y, glyph.color.z);
+    glActiveTexture(GL_TEXTURE0);
+    glBindVertexArray(VAO_Text);
+
+    for (auto c = text.begin(); c != text.end(); c++) {
+        Glyph ch = Characters[*c];
+
+        float xpos = glyph.position.x + ch.bearing.x * glyph.scale.x;
+        float ypos = glyph.position.y - (ch.size.y - ch.bearing.y) * glyph.scale.y;
+
+        float w = ch.size.x * glyph.scale.x;
+        float h = ch.size.y * glyph.scale.y;
+
+        float vertices[6][4] = {
+            { xpos,     ypos + h,   0.0f, 0.0f },
+            { xpos,     ypos,       0.0f, 1.0f },
+            { xpos + w, ypos,       1.0f, 1.0f },
+
+            { xpos,     ypos + h,   0.0f, 0.0f },
+            { xpos + w, ypos,       1.0f, 1.0f },
+            { xpos + w, ypos + h,   1.0f, 0.0f }
+        };
+
+        glBindTexture(GL_TEXTURE_2D, ch.textureId);
+        glBindBuffer(GL_ARRAY_BUFFER, VBO_Text);
+        glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+        glDrawArrays(GL_TRIANGLES, 0, 6);
+
+        glyph.position.x += (ch.advance >> 6) * glyph.scale.x; // Avanza alla prossima posizione
+    }
+
+    glBindVertexArray(0);
+    glBindTexture(GL_TEXTURE_2D, 0);
+}

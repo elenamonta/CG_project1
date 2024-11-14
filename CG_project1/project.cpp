@@ -10,14 +10,14 @@
 #include "gestione_curve.h"
 #include "Gui.h"
 #include "Utilities.h"
-#include <math.h>
+
 
 #include "imgui/imgui.h"
 #include "imgui/imgui_impl_glfw.h"
 #include "imgui/imgui_impl_opengl3.h"
 
-int height = 800, width = 800, speed, nPlatform = 6;
-unsigned int programId, programIdS;
+int height = 800, width = 800, speed, nPlatform = 6, points=0;
+unsigned int programId, programIdS, programId_text, VAO_Text, VBO_Text;
 float r = 0.0f, g = 0.0f, b = 0.0f, deltaTime = 0.0f, lastFrame, alpha, raggio = 1.0f, timeAcc, direction = 0.0f, velocity = 1.0f;
 float Tens = 0.0, Bias = 0.0, Cont = 0.0, step_t;
 float* t; int counter=0;
@@ -25,10 +25,13 @@ float* t; int counter=0;
 mat4 Projection;
 vec2 resolution;
 Figura background;
-GLuint MatProj, MatModel, MatProjS, MatModelS, vec_resS, loc_time, loc_speed;
+GLuint MatProj, MatModel, MatProjS, MatModelS, vec_resS, loc_time, loc_speed, MatProjText, text_color;
 Curva player = {}, highest = {};
+Glyph glyph = {}; 
 vector<Curva> platforms;
 vector<Curva> bouncings;
+
+map<char, Glyph> Characters;
 
 int main(void)
 {
@@ -61,8 +64,15 @@ int main(void)
 
 	glfwSetKeyCallback(window, key_callback);
 
+	glViewport(0, 0, width, height);
+	//glEnable(GL_CULL_FACE);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
 	INIT_SHADER();
 
+
+	
 	background.nTriangles = 2;
 	background.programId = programIdS;
 	background.scale = vec3(2.0 * float(width), 2.0 * float(height), 1.0);
@@ -95,6 +105,15 @@ int main(void)
 		platforms.push_back(platform);
 	}
 
+	glyph.scale = vec3(1.0f, 1.0f, 1.0f);
+	glyph.position.x = 20.0;
+	glyph.position.y = 600.0;
+	glyph.color = vec3(0.0f, 0.0f, 0.0f);
+	LoadFonts("C:/Windows/Fonts/Inkfree.ttf");
+	INIT_VAO_Text();
+
+
+
 	Projection = ortho(0.0f, float(width), 0.0f, float(height));
 	resolution = vec2(float(height), float(width));
 
@@ -107,6 +126,8 @@ int main(void)
 	loc_time = glGetUniformLocation(programIdS, "time");
 	loc_speed = glGetUniformLocation(programIdS, "speed");
 
+	MatProjText = glGetUniformLocation(programId_text, "Projection_text");
+	text_color = glGetUniformLocation(programId_text, "textColor"); 
 	Initialize_IMGUI(window);
 
 
@@ -119,6 +140,9 @@ int main(void)
 
 		if (velocity < 0) {
 			if (checkCollision_platform(player, platforms)) {
+				if (!checkCollision(player, platforms[0])) {
+					points += 5; 
+				}
 				velocity = 8;
 				if (checkCollision_platform(player, bouncings)) {
 					velocity *= 2;
@@ -190,8 +214,10 @@ int main(void)
 
 		my_interface();
 		render(currentFrame);
-		renderCurva();
+		std::string text = "points: " + std::to_string(points);
 
+		RenderText(text, glyph);
+		renderCurva();
 
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 		 

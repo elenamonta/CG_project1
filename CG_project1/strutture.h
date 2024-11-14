@@ -66,3 +66,12 @@ typedef struct {
     vec4 max_BB;
 } Curva;
 
+typedef struct {
+    unsigned int textureId;
+    glm::ivec2 size;
+    glm::ivec2 bearing;
+    glm::vec2 scale;
+    glm::vec3 color;
+    glm::vec2 position;
+    unsigned int advance;
+}Glyph;

@@ -1,6 +1,7 @@
 #pragma once
 #include "strutture.h"
 #include "lib.h"
+
 vec2 randomPosition();
 float randomx(Curva platform); 
 void findBB(Figura* fig);
@@ -13,3 +14,4 @@ bool outOfBound(Curva obj);
 void updatePlayer(Curva* player);
 Curva higher_platform(vector<Curva> platforms);
 int generateRand();
+void LoadFonts(const std::string& fontPath);

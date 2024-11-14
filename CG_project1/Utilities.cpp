@@ -2,8 +2,13 @@
 #include "lib.h"
 #include "strutture.h"
 #include <random>
+
+#include <ft2build.h>
+#include FT_FREETYPE_H
+
 extern int width, height; 
 extern float direction, velocity;
+extern map<char, Glyph> Characters;
 
 vec2 randomPosition() {
     static std::random_device rd;
@@ -59,7 +64,6 @@ void findBB(Figura* fig) {
 
 }
 
-
 void findBB_Curva(Curva* fig) {
     int n;
     n = fig->vertices.size();
@@ -89,9 +93,6 @@ void findBB_Curva(Curva* fig) {
     fig->min_BB_obj = vec4(minx, miny, 0.0, 1.0);
     fig->max_BB_obj = vec4(maxx, maxy, 0.0, 1.0);
 }
-
-
-
 
 bool checkCollision(Curva obj1, Curva obj2) {
     // guardo collisioni su asse x
@@ -161,8 +162,6 @@ void updatePlayer(Curva* player) {
     updateBB_Curva(player); 
 }
 
-
-
 Curva higher_platform(vector<Curva> platforms) {
     Curva higher = {};
     higher.position.x = 0.0; 
@@ -173,4 +172,61 @@ Curva higher_platform(vector<Curva> platforms) {
         }
     }
     return higher; 
+}
+
+void LoadFonts(const std::string& fontPath) {
+    FT_Library ft;
+    if (FT_Init_FreeType(&ft)) {
+        std::cerr << "Impossibile inizializzare FreeType Library" << std::endl;
+        return;
+    }
+
+    FT_Face face;
+    if (FT_New_Face(ft, fontPath.c_str(), 0, &face)) {
+        std::cerr << "Impossibile caricare il font" << std::endl;
+        return;
+    }
+
+    FT_Set_Pixel_Sizes(face, 0, 20); // Imposta la dimensione dei caratteri
+
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 1); // Disabilita l'allineamento byte
+
+    for (unsigned char c = 0; c < 128; c++) {
+        if (FT_Load_Char(face, c, FT_LOAD_RENDER)) {
+            std::cerr << "Impossibile caricare il glifo per il carattere " << c << std::endl;
+            continue;
+        }
+
+        unsigned int texture;
+        glGenTextures(1, &texture);
+        glBindTexture(GL_TEXTURE_2D, texture);
+        glTexImage2D(
+            GL_TEXTURE_2D,
+            0,
+            GL_RED,
+            face->glyph->bitmap.width,
+            face->glyph->bitmap.rows,
+            0,
+            GL_RED,
+            GL_UNSIGNED_BYTE,
+            face->glyph->bitmap.buffer
+        );
+
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+
+        Glyph glyph = {};
+        glyph.textureId = texture;
+        glyph.size = glm::ivec2(face->glyph->bitmap.width, face->glyph->bitmap.rows);
+        glyph.bearing = glm::ivec2(face->glyph->bitmap_left, face->glyph->bitmap_top);
+        glyph.advance = face->glyph->advance.x;
+
+        Characters.insert(std::pair<char, Glyph>(c, glyph));
+    }
+
+    FT_Done_Face(face);
+    FT_Done_FreeType(ft);
 }
