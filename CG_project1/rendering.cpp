@@ -16,6 +16,7 @@ extern Curva player, molla;
 extern vector<Curva> platforms, bouncings;
 extern map<char, Glyph> Characters;
 
+extern Curva cap; 
 
 void render(float currentFrame)
 {
@@ -78,6 +79,15 @@ void renderCurva() {
 
     //updateBB_Curva(&player);
     glDrawArrays(player.render, 0, player.nv);
+
+    glUseProgram(cap.programId);
+    glUniformMatrix4fv(MatProj, 1, GL_FALSE, value_ptr(Projection));
+    cap.Model = mat4(1.0);
+    cap.Model = translate(cap.Model, vec3(cap.position.x,cap.position.y, 0.0));
+    cap.Model = scale(cap.Model, cap.scale);
+    glUniformMatrix4fv(MatModel, 1, GL_FALSE, value_ptr(cap.Model));
+    glBindVertexArray(cap.VAO);
+    glDrawArrays(cap.render, 0, cap.nv);
     
 
 }

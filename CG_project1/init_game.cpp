@@ -9,6 +9,7 @@ extern GLuint MatProj, MatModel, MatProjS, MatModelS, vec_resS, loc_time, loc_sp
 extern mat4 Projection;
 extern vec2 resolution;
 
+extern Curva cap; 
 
 void initShape() {
 	player.programId = programId;
@@ -19,6 +20,14 @@ void initShape() {
 	INIT_FORMA(&player, "mycurve.txt", GL_TRIANGLE_FAN);
 	INIT_VAO_Curva(&player);
 
+
+	cap.programId = programId;
+	cap.scale = vec3(80.0, 80.0, 80.0);
+	INIT_FORMA(&cap, "cappellino.txt", GL_TRIANGLE_FAN);
+	cap.position.x = player.position.x - 10.0;
+	cap.position.y = player.position.y - (cap.min_BB_obj.y * cap.scale.y - player.max_BB_obj.y * player.scale.y) - 20.0;
+	INIT_VAO_Curva(&cap);
+	
 
 
 	for (int i = 0; i < nPlatform; i++) {
@@ -41,7 +50,7 @@ void initShape() {
 	glyph.scale = vec3(0.3f, 0.3f, 0.3f);
 	glyph.position.x = 70.0;
 	glyph.position.y = 650.0;
-	glyph.color = vec3(0.0f, 0.0f, 0.0f);
+	glyph.color = vec3(1.0f, 1.0f, 1.0f);
 	LoadFonts("C:/Windows/Fonts/Inkfree.ttf", 80);
 	INIT_VAO_Text();
 
@@ -57,7 +66,7 @@ void initShape() {
 	MatModelS = glGetUniformLocation(programIdS, "Model");
 	vec_resS = glGetUniformLocation(programIdS, "resolution");
 	loc_time = glGetUniformLocation(programIdS, "time");
-	loc_speed = glGetUniformLocation(programIdS, "speed");
+	//loc_speed = glGetUniformLocation(programIdS, "speed");
 
 	MatProjText = glGetUniformLocation(programId_text, "Projection_text");
 	text_color = glGetUniformLocation(programId_text, "textColor");

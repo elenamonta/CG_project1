@@ -96,12 +96,9 @@ void findBB_Curva(Curva* fig) {
 }
 
 bool checkCollision(Curva obj1, Curva obj2) {
-    // guardo collisioni su asse x
-
     bool collisionX = obj1.min_BB.x <= obj2.max_BB.x &&
         obj1.max_BB.x >= obj2.min_BB.x;
 
-    // guardo collisioni su asse y
 
     bool collisionY = obj1.min_BB.y <= obj2.max_BB.y &&
         obj1.max_BB.y >= obj2.min_BB.y;
@@ -114,11 +111,10 @@ bool checkCollision_platform(Curva obj1, vector<Curva> vecCurve)
     for (const Curva obj2 : vecCurve) {
         bool collisionX = obj1.min_BB.x <= obj2.max_BB.x &&
             obj1.max_BB.x >= obj2.min_BB.x;
-
-        // guardo collisioni su asse y
-
+        
         bool collisionY = obj1.min_BB.y <= obj2.max_BB.y &&
             obj1.max_BB.y >= obj2.min_BB.y;
+        
         
         if (collisionX && collisionY) {
             return true; 

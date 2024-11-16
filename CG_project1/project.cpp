@@ -35,6 +35,8 @@ vector<Curva> bouncings;
 
 map<char, Glyph> Characters; 
 
+Curva cap = {}; 
+
 int main(void)
 {
 	GLFWwindow* window;
@@ -109,6 +111,11 @@ int main(void)
 		 
 		updateBB_Curva(&player); 
 		updatePlayer(&player); 
+		updateBB_Curva(&cap);
+		cap.position.x = player.position.x - 10.0;
+		cap.position.y = player.position.y - (cap.min_BB_obj.y * cap.scale.y - player.max_BB_obj.y * player.scale.y) - 20.0;
+
+		
 
 		
 		if (player.position.y >= height / 2) {
@@ -155,7 +162,7 @@ int main(void)
 
 					Curva molla = {};
 					molla.programId = programId;
-					molla.scale = vec3(100.0, 100.0, 100.0);
+					molla.scale = vec3(90.0, 90.0, 90.0);
 					INIT_FORMA(&molla, "molla.txt", GL_LINE_STRIP);
 					molla.position.x = platforms[platforms.size() - 1].position.x;
 					molla.position.y = platforms[platforms.size() - 1].position.y - (molla.min_BB_obj.y * molla.scale.y - platforms[platforms.size() - 1].max_BB_obj.y * platforms[platforms.size() - 1].scale.y);
@@ -184,14 +191,14 @@ int main(void)
 			Glyph glyph = {};
 			glyph.position.x = width / 2; 
 			glyph.position.y = height / 2;
-			glyph.color = vec3(0.0f, 0.0f, 0.0f);
+			glyph.color = vec3(1.0f, 1.0f, 1.0f);
 			glyph.scale = vec3(1.0f, 1.0f, 1.0f);
 
 			RenderText("GAME OVER", glyph);
 		}
 			
 
-		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+		//ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 		 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
