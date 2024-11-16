@@ -68,18 +68,17 @@ void renderCurva() {
         glDrawArrays(bouncings[j].render, 1, bouncings[j].nv - 5);
     }
 
-    if (player.isalive) {
-        glUseProgram(player.programId);
-        glUniformMatrix4fv(MatProj, 1, GL_FALSE, value_ptr(Projection));
-        player.Model = mat4(1.0);
-        player.Model = translate(player.Model, vec3(player.position.x, player.position.y, 0.0));
-        player.Model = scale(player.Model, player.scale);
-        glUniformMatrix4fv(MatModel, 1, GL_FALSE, value_ptr(player.Model));
-        glBindVertexArray(player.VAO);
+    glUseProgram(player.programId);
+    glUniformMatrix4fv(MatProj, 1, GL_FALSE, value_ptr(Projection));
+    player.Model = mat4(1.0);
+    player.Model = translate(player.Model, vec3(player.position.x, player.position.y, 0.0));
+    player.Model = scale(player.Model, player.scale);
+    glUniformMatrix4fv(MatModel, 1, GL_FALSE, value_ptr(player.Model));
+    glBindVertexArray(player.VAO);
 
-        updateBB_Curva(&player);
-        glDrawArrays(player.render, 0, player.nv);
-    }
+    //updateBB_Curva(&player);
+    glDrawArrays(player.render, 0, player.nv);
+    
 
 }
 
@@ -90,6 +89,14 @@ void RenderText(const std::string& text, Glyph glyph) {
     glUniform3f(text_color, glyph.color.x, glyph.color.y, glyph.color.z);
     glActiveTexture(GL_TEXTURE0);
     glBindVertexArray(VAO_Text);
+
+    float textWidth = 0.0f;
+    for (auto c = text.begin(); c != text.end(); c++) {
+        Glyph ch = Characters[*c];
+        textWidth += (ch.advance >> 6) * glyph.scale.x; 
+    }
+
+    glyph.position.x -= textWidth / 2.0f;
 
     for (auto c = text.begin(); c != text.end(); c++) {
         Glyph ch = Characters[*c];

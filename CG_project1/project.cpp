@@ -10,6 +10,7 @@
 #include "gestione_curve.h"
 #include "Gui.h"
 #include "Utilities.h"
+#include "init_game.h"
 
 
 #include "imgui/imgui.h"
@@ -21,6 +22,7 @@ unsigned int programId, programIdS, programId_text, VAO_Text, VBO_Text;
 float r = 0.0f, g = 0.0f, b = 0.0f, deltaTime = 0.0f, lastFrame, alpha, raggio = 1.0f, timeAcc, direction = 0.0f, velocity = 1.0f;
 float Tens = 0.0, Bias = 0.0, Cont = 0.0, step_t;
 float* t; int counter=0;
+bool inGame = true; 
 
 mat4 Projection;
 vec2 resolution;
@@ -31,7 +33,7 @@ Glyph glyph = {};
 vector<Curva> platforms;
 vector<Curva> bouncings;
 
-map<char, Glyph> Characters;
+map<char, Glyph> Characters; 
 
 int main(void)
 {
@@ -80,55 +82,9 @@ int main(void)
 	INIT_PIANO(&background);
 	INIT_VAO(&background);
 
-	player.programId = programId;
-	player.position.x = width / 2.0;
-	player.position.y = height / 5.0;
-	player.isalive = true; 
-	player.scale = vec3(30.0, 30.0, 30.0); 
-	INIT_FORMA(&player, "mycurve.txt", GL_TRIANGLE_FAN);
-	INIT_VAO_Curva(&player);
-
-	for (int i = 0; i < nPlatform; i++) {
-		Curva platform = {};
-		platform.programId = programId;
-		platform.scale = vec3(20.0, 20.0, 20.0);
-		INIT_FORMA(&platform, "platform_punte.txt", GL_TRIANGLE_FAN);
-		if (i == 0) {
-			platform.position.y = player.position.y - (((player.max_BB_obj.y - player.min_BB_obj.y) / 2) * player.scale.y) - (((platform.max_BB_obj.y - platform.min_BB_obj.y) / 2) * platform.scale.y);
-			platform.position.x = player.position.x;
-		}
-		else {
-			platform.position.y = platforms[platforms.size() - 1].position.y + (height / 5.0f);
-			platform.position.x = randomx(platform);
-		}
-		INIT_VAO_Curva(&platform);
-		platforms.push_back(platform);
-	}
-
-	glyph.scale = vec3(1.0f, 1.0f, 1.0f);
-	glyph.position.x = 20.0;
-	glyph.position.y = 600.0;
-	glyph.color = vec3(0.0f, 0.0f, 0.0f);
-	LoadFonts("C:/Windows/Fonts/Inkfree.ttf");
-	INIT_VAO_Text();
-
-
-
-	Projection = ortho(0.0f, float(width), 0.0f, float(height));
-	resolution = vec2(float(height), float(width));
-
-	MatProj = glGetUniformLocation(programId, "Projection");
-	MatModel = glGetUniformLocation(programId, "Model");
-
-	MatProjS = glGetUniformLocation(programIdS, "Projection");
-	MatModelS = glGetUniformLocation(programIdS, "Model");
-	vec_resS = glGetUniformLocation(programIdS, "resolution");
-	loc_time = glGetUniformLocation(programIdS, "time");
-	loc_speed = glGetUniformLocation(programIdS, "speed");
-
-	MatProjText = glGetUniformLocation(programId_text, "Projection_text");
-	text_color = glGetUniformLocation(programId_text, "textColor"); 
+	initShape();
 	Initialize_IMGUI(window);
+
 
 
 	//loop game
@@ -137,6 +93,7 @@ int main(void)
 		float currentFrame = glfwGetTime();
 		int outOfBoundPlatformNum = 0;
 		int outOfBoundBouncNum = 0;
+
 
 		if (velocity < 0) {
 			if (checkCollision_platform(player, platforms)) {
@@ -149,12 +106,10 @@ int main(void)
 				}
 			}
 		}
-		
+		 
+		updateBB_Curva(&player); 
 		updatePlayer(&player); 
 
-		if (!player.isalive) {
-			glfwSetWindowShouldClose(window, GLFW_TRUE);
-		}
 		
 		if (player.position.y >= height / 2) {
 			player.position.y -= velocity; 
@@ -212,12 +167,29 @@ int main(void)
 			}
 		}
 
-		my_interface();
-		render(currentFrame);
-		std::string text = "points: " + std::to_string(points);
 
-		RenderText(text, glyph);
-		renderCurva();
+		render(currentFrame);
+
+		my_interface();
+
+		if (player.isalive) {
+			std::string text = "points: " + std::to_string(points);
+			RenderText(text, glyph);
+			renderCurva();
+		}
+		else {
+			platforms.clear();
+			bouncings.clear();
+
+			Glyph glyph = {};
+			glyph.position.x = width / 2; 
+			glyph.position.y = height / 2;
+			glyph.color = vec3(0.0f, 0.0f, 0.0f);
+			glyph.scale = vec3(1.0f, 1.0f, 1.0f);
+
+			RenderText("GAME OVER", glyph);
+		}
+			
 
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 		 
@@ -255,3 +227,4 @@ int main(void)
 	glfwTerminate();
 	return 0;
 }
+

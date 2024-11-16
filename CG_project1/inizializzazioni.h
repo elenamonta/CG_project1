@@ -1,4 +1,5 @@
 #pragma once
+#include "strutture.h"
 
 void INIT_VAO(Figura* fig);
 void INIT_SHADER(void);

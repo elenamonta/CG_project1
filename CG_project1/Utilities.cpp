@@ -9,6 +9,7 @@
 extern int width, height; 
 extern float direction, velocity;
 extern map<char, Glyph> Characters;
+//extern Curva player;
 
 vec2 randomPosition() {
     static std::random_device rd;
@@ -146,20 +147,20 @@ bool outOfBound(Curva obj) {
     return /*obj.min_BB.y >= height ||*/ obj.max_BB.y <= 0.0; 
 }
 
-void updatePlayer(Curva* player) {
+void updatePlayer(Curva * player) {
     velocity -= 0.1f; 
     player->position.x += direction; 
-    player->position.y += velocity; 
+    player->position.y += velocity;
     if (player->max_BB.x > width + 1) {
         player->position.x = width - ((player->max_BB.x - player->min_BB.x) / 2);
     }
     if (player->min_BB.x < 0) {
         player->position.x = (player->max_BB.x - player->min_BB.x) / 2;
     }
+    updateBB_Curva(player);
     if (player->min_BB.y < 0) {
-        player->isalive = false; 
+        player->isalive = false;
     } 
-    updateBB_Curva(player); 
 }
 
 Curva higher_platform(vector<Curva> platforms) {
@@ -174,7 +175,7 @@ Curva higher_platform(vector<Curva> platforms) {
     return higher; 
 }
 
-void LoadFonts(const std::string& fontPath) {
+void LoadFonts(const std::string& fontPath, unsigned int fontSize) {
     FT_Library ft;
     if (FT_Init_FreeType(&ft)) {
         std::cerr << "Impossibile inizializzare FreeType Library" << std::endl;
@@ -187,9 +188,9 @@ void LoadFonts(const std::string& fontPath) {
         return;
     }
 
-    FT_Set_Pixel_Sizes(face, 0, 20); // Imposta la dimensione dei caratteri
+    FT_Set_Pixel_Sizes(face, 0, fontSize); 
 
-    glPixelStorei(GL_UNPACK_ALIGNMENT, 1); // Disabilita l'allineamento byte
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
     for (unsigned char c = 0; c < 128; c++) {
         if (FT_Load_Char(face, c, FT_LOAD_RENDER)) {

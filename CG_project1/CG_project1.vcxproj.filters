@@ -75,6 +75,9 @@
     <ClCompile Include="Gui.cpp">
       <Filter>File di origine</Filter>
     </ClCompile>
+    <ClCompile Include="init_game.cpp">
+      <Filter>File di origine</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -132,6 +135,9 @@
       <Filter>File di intestazione\imgui</Filter>
     </ClInclude>
     <ClInclude Include="Gui.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
+    <ClInclude Include="init_game.h">
       <Filter>File di intestazione</Filter>
     </ClInclude>
   </ItemGroup>
