@@ -20,7 +20,10 @@
 #include <ft2build.h>
 #include FT_FREETYPE_H
 
+#include <irrKlang.h>
+
  
 
 using namespace std;
 using namespace glm;
+using namespace irrklang;

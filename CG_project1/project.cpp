@@ -28,17 +28,19 @@ mat4 Projection;
 vec2 resolution;
 Figura background;
 GLuint MatProj, MatModel, MatProjS, MatModelS, vec_resS, loc_time, loc_speed, MatProjText, text_color;
-Curva player = {}, highest = {};
+Curva player = {}, highest = {}, cap = {};
 Glyph glyph = {}; 
 vector<Curva> platforms;
 vector<Curva> bouncings;
-
 map<char, Glyph> Characters; 
 
-Curva cap = {}; 
+
+
 
 int main(void)
 {
+	ISoundEngine* engine = createIrrKlangDevice();
+
 	GLFWwindow* window;
 
 	if (!glfwInit()) return 1;
@@ -96,6 +98,13 @@ int main(void)
 		int outOfBoundPlatformNum = 0;
 		int outOfBoundBouncNum = 0;
 
+		updateBB_Curva(&player);
+		updateBB_Curva(&cap);
+
+		for (int i = 0; i < platforms.size(); i++) {
+			updateBB_Curva(&platforms[i]); 
+		}
+	
 
 		if (velocity < 0) {
 			if (checkCollision_platform(player, platforms)) {
@@ -105,13 +114,16 @@ int main(void)
 				velocity = 8;
 				if (checkCollision_platform(player, bouncings)) {
 					velocity *= 2;
+
+					engine->play2D("media/spring.mp3", false);
 				}
+
+				engine->play2D("media/jump.mp3", false);
 			}
 		}
 		 
-		updateBB_Curva(&player); 
+		 
 		updatePlayer(&player); 
-		updateBB_Curva(&cap);
 		cap.position.x = player.position.x - 10.0;
 		cap.position.y = player.position.y - (cap.min_BB_obj.y * cap.scale.y - player.max_BB_obj.y * player.scale.y) - 20.0;
 
@@ -228,7 +240,7 @@ int main(void)
 		glDeleteBuffers(1, &bouncings[j].VBO_colors);
 		glDeleteVertexArrays(1, &bouncings[j].VAO);
 	}
-	
+	engine->drop();
 	
 
 	glfwTerminate();

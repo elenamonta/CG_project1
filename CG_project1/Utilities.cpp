@@ -10,6 +10,7 @@ extern int width, height;
 extern float direction, velocity;
 extern map<char, Glyph> Characters;
 //extern Curva player;
+float flexibility = 10.0; 
 
 vec2 randomPosition() {
     static std::random_device rd;
@@ -109,9 +110,10 @@ bool checkCollision(Curva obj1, Curva obj2) {
 bool checkCollision_platform(Curva obj1, vector<Curva> vecCurve)
 {
     for (const Curva obj2 : vecCurve) {
+        /*bool collisionX = obj1.min_BB.x >= obj2.min_BB.x +(obj1.max_BB.x - obj1.min_BB.x) / 2 &&
+            obj1.max_BB.x <= obj2.max_BB.x + (obj1.max_BB.x - obj1.min_BB.x) / 2;*/
         bool collisionX = obj1.min_BB.x <= obj2.max_BB.x &&
             obj1.max_BB.x >= obj2.min_BB.x;
-        
         bool collisionY = obj1.min_BB.y <= obj2.max_BB.y &&
             obj1.max_BB.y >= obj2.min_BB.y;
         
