@@ -83,7 +83,7 @@ int main(void)
 	initShape();
 
 
-
+	 
 	//loop game
 	while (!glfwWindowShouldClose(window))
 	{

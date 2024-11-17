@@ -61,15 +61,13 @@ void INIT_FORMA(Curva* curva, const char* filename, int render)
     }
 
 
-    // Vettore per memorizzare i dati
-    struct Dati dati[1000]; // Supponiamo che ci siano al massimo 100 righe nel file
+    
+    struct Dati dati[1000]; 
 
     int riga = 0;
     while (fscanf_s(file, "%f %f %f %f %f %f", &dati[riga].x, &dati[riga].y, &dati[riga].z, &dati[riga].r, &dati[riga].g, &dati[riga].b) == 6) {
-        // Incrementa l'indice della riga
         riga++;
 
-        // Puoi aggiungere un controllo qui per evitare il superamento dell'array dati
         if (riga >= 1000) {
             printf("Troppe righe nel file. L'array dati   stato completamente riempito.\n");
             break;
@@ -78,7 +76,6 @@ void INIT_FORMA(Curva* curva, const char* filename, int render)
 
 
 
-    // Chiudi il file
     fclose(file);
 
 
@@ -106,22 +103,9 @@ void INIT_FORMA(Curva* curva, const char* filename, int render)
         sumz += curva->CP[i].z;
     }
     vec3 centro = vec3(sumx/curva->CP.size(), sumy / curva->CP.size(), 0.0);
-    /*if (!with_center) {
-        centro = NULL_CENTER;
-    }*/
     
     CostruisciHermite(t, curva, centro, curva->colorVertices);
     findBB_Curva(curva);
-
-
-    /*if (centro != NULL_CENTER) {
-        curva->nv = curva->vertices.size();
-        curva->render = GL_TRIANGLE_FAN;
-    }
-    else {
-        curva->nv = curva->vertices.size();
-        curva->render = GL_LINE_STRIP;
-    }*/
 
     curva->nv = curva->vertices.size();
     curva->render = render;
