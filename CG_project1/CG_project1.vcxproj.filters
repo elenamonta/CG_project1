@@ -13,12 +13,6 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="File di intestazione\imgui">
-      <UniqueIdentifier>{6ead0f71-7899-4733-9796-58035473f141}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="File di origine\imgui">
-      <UniqueIdentifier>{9f679d28-053a-4658-aa89-3bde34ac4364}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="project.cpp">
@@ -51,30 +45,6 @@
     <ClCompile Include="ShaderMaker.cpp">
       <Filter>File di origine</Filter>
     </ClCompile>
-    <ClCompile Include="ImGui\imgui_widgets.cpp">
-      <Filter>File di origine\imgui</Filter>
-    </ClCompile>
-    <ClCompile Include="ImGui\imgui.cpp">
-      <Filter>File di origine\imgui</Filter>
-    </ClCompile>
-    <ClCompile Include="ImGui\imgui_demo.cpp">
-      <Filter>File di origine\imgui</Filter>
-    </ClCompile>
-    <ClCompile Include="ImGui\imgui_draw.cpp">
-      <Filter>File di origine\imgui</Filter>
-    </ClCompile>
-    <ClCompile Include="ImGui\imgui_impl_glfw.cpp">
-      <Filter>File di origine\imgui</Filter>
-    </ClCompile>
-    <ClCompile Include="ImGui\imgui_impl_opengl3.cpp">
-      <Filter>File di origine\imgui</Filter>
-    </ClCompile>
-    <ClCompile Include="ImGui\imgui_tables.cpp">
-      <Filter>File di origine\imgui</Filter>
-    </ClCompile>
-    <ClCompile Include="Gui.cpp">
-      <Filter>File di origine</Filter>
-    </ClCompile>
     <ClCompile Include="init_game.cpp">
       <Filter>File di origine</Filter>
     </ClCompile>
@@ -105,36 +75,6 @@
       <Filter>File di intestazione</Filter>
     </ClInclude>
     <ClInclude Include="ShaderMaker.h">
-      <Filter>File di intestazione</Filter>
-    </ClInclude>
-    <ClInclude Include="ImGui\imstb_truetype.h">
-      <Filter>File di intestazione\imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="ImGui\imconfig.h">
-      <Filter>File di intestazione\imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="ImGui\imgui.h">
-      <Filter>File di intestazione\imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="ImGui\imgui_impl_glfw.h">
-      <Filter>File di intestazione\imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="ImGui\imgui_impl_opengl3.h">
-      <Filter>File di intestazione\imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="ImGui\imgui_impl_opengl3_loader.h">
-      <Filter>File di intestazione\imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="ImGui\imgui_internal.h">
-      <Filter>File di intestazione\imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="ImGui\imstb_rectpack.h">
-      <Filter>File di intestazione\imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="ImGui\imstb_textedit.h">
-      <Filter>File di intestazione\imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="Gui.h">
       <Filter>File di intestazione</Filter>
     </ClInclude>
     <ClInclude Include="init_game.h">

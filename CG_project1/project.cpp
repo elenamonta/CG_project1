@@ -8,14 +8,8 @@
 #include "inizializzazioni.h"
 #include "init_geometrie.h"
 #include "gestione_curve.h"
-#include "Gui.h"
 #include "Utilities.h"
 #include "init_game.h"
-
-
-#include "imgui/imgui.h"
-#include "imgui/imgui_impl_glfw.h"
-#include "imgui/imgui_impl_opengl3.h"
 
 int height = 800, width = 800, speed, nPlatform = 6, points=0;
 unsigned int programId, programIdS, programId_text, VAO_Text, VBO_Text;
@@ -87,7 +81,6 @@ int main(void)
 	INIT_VAO(&background);
 
 	initShape();
-	Initialize_IMGUI(window);
 
 
 
@@ -114,6 +107,7 @@ int main(void)
 				velocity = 8;
 				if (checkCollision_platform(player, bouncings)) {
 					velocity *= 2;
+					points += 20;
 
 					engine->play2D("media/spring.mp3", false);
 				}
@@ -189,7 +183,6 @@ int main(void)
 
 		render(currentFrame);
 
-		my_interface();
 
 		if (player.isalive) {
 			std::string text = "points: " + std::to_string(points);
@@ -207,10 +200,13 @@ int main(void)
 			glyph.scale = vec3(1.0f, 1.0f, 1.0f);
 
 			RenderText("GAME OVER", glyph);
+
+			glyph.position.y = height / 2 - 40.0;
+			glyph.scale = vec3(0.3f, 0.3f, 0.3f);
+			std::string text = "points: " + std::to_string(points);
+			RenderText(text, glyph);
 		}
 			
-
-		//ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 		 
 		glfwSwapBuffers(window);
 		glfwPollEvents();

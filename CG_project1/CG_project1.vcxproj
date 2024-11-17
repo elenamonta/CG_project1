@@ -147,14 +147,6 @@
     <ClCompile Include="gestione_curve.cpp" />
     <ClCompile Include="gestione_interazioni.cpp" />
     <ClCompile Include="glad.c" />
-    <ClCompile Include="Gui.cpp" />
-    <ClCompile Include="ImGui\imgui.cpp" />
-    <ClCompile Include="ImGui\imgui_demo.cpp" />
-    <ClCompile Include="ImGui\imgui_draw.cpp" />
-    <ClCompile Include="ImGui\imgui_impl_glfw.cpp" />
-    <ClCompile Include="ImGui\imgui_impl_opengl3.cpp" />
-    <ClCompile Include="ImGui\imgui_tables.cpp" />
-    <ClCompile Include="ImGui\imgui_widgets.cpp" />
     <ClCompile Include="init_game.cpp" />
     <ClCompile Include="init_geometrie.cpp" />
     <ClCompile Include="inizializzazioni.cpp" />
@@ -170,16 +162,6 @@
   <ItemGroup>
     <ClInclude Include="gestione_curve.h" />
     <ClInclude Include="gestione_interazioni.h" />
-    <ClInclude Include="Gui.h" />
-    <ClInclude Include="ImGui\imconfig.h" />
-    <ClInclude Include="ImGui\imgui.h" />
-    <ClInclude Include="ImGui\imgui_impl_glfw.h" />
-    <ClInclude Include="ImGui\imgui_impl_opengl3.h" />
-    <ClInclude Include="ImGui\imgui_impl_opengl3_loader.h" />
-    <ClInclude Include="ImGui\imgui_internal.h" />
-    <ClInclude Include="ImGui\imstb_rectpack.h" />
-    <ClInclude Include="ImGui\imstb_textedit.h" />
-    <ClInclude Include="ImGui\imstb_truetype.h" />
     <ClInclude Include="init_game.h" />
     <ClInclude Include="init_geometrie.h" />
     <ClInclude Include="inizializzazioni.h" />
