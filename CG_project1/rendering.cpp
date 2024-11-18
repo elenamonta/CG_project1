@@ -12,11 +12,10 @@ extern mat4 Projection;
 extern vec2 resolution;
 extern vec3 centro; 
 extern Figura background;
-extern Curva player, molla; 
+extern Curva player, molla, cap; 
 extern vector<Curva> platforms, bouncings;
 extern map<char, Glyph> Characters;
 
-extern Curva cap; 
 
 void render(float currentFrame)
 {
@@ -32,7 +31,6 @@ void render(float currentFrame)
     glUniformMatrix4fv(MatModelS, 1, GL_FALSE, value_ptr(background.Model));
     glUniform2fv(vec_resS, 1, value_ptr(resolution));
     glUniform1f(loc_time, currentFrame);
-    glUniform1f(loc_speed, speed);
 
     glBindVertexArray(background.VAO);
     glDrawArrays(background.render, 0, background.nv);

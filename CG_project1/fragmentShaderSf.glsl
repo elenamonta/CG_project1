@@ -54,15 +54,12 @@ void main() {
     uv = uv * 2.0 - 1.0;
     uv.x *= resolution.x / resolution.y;
 
-    // Scala il tempo in base alla velocità specificata
     float scaledTime = time / 4.0;
 
-    // Colore di sfondo azzurro-grigio
     vec3 backgroundColor = vec3(0.6, 0.7, 0.8); // Colore azzurro-grigio (rgb: 0.6, 0.7, 0.8)
 
-    // Calcola il colore dei fiocchi
     float snowColor = col(uv);
-    vec3 finalColor = mix(backgroundColor, vec3(1.0), snowColor); // Fiocchi bianchi su sfondo azzurro-grigio
+    vec3 finalColor = mix(backgroundColor, vec3(1.0), snowColor); 
 
     FragColor = vec4(finalColor, 1.0);
 }

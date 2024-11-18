@@ -17,7 +17,7 @@ float r = 0.0f, g = 0.0f, b = 0.0f, deltaTime = 0.0f, lastFrame = 0.0f, alpha, r
 float Tens = 0.0, Bias = 0.0, Cont = 0.0, step_t;
 float* t; int counter=0;
 bool inGame = true; 
-float frameCap = 5.0f;
+float frameCap = 4.0f;
 
 mat4 Projection;
 vec2 resolution;
@@ -122,11 +122,11 @@ int main(void)
 				}
 			}
 
-
-			updatePlayer(&player);
 			cap.position.x = player.position.x - 10.0;
 			cap.position.y = player.position.y - (cap.min_BB_obj.y * cap.scale.y - player.max_BB_obj.y * player.scale.y) - 20.0;
 
+			updatePlayer(&player);
+			
 
 
 

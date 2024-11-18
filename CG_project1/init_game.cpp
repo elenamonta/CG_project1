@@ -1,6 +1,6 @@
 #include "init_game.h"
 
-extern Curva player; 
+extern Curva player, cap; 
 extern Glyph glyph; 
 extern int nPlatform, width, height;
 extern vector<Curva> platforms;
@@ -9,7 +9,6 @@ extern GLuint MatProj, MatModel, MatProjS, MatModelS, vec_resS, loc_time, loc_sp
 extern mat4 Projection;
 extern vec2 resolution;
 
-extern Curva cap; 
 
 void initShape() {
 	player.programId = programId;
@@ -66,7 +65,6 @@ void initShape() {
 	MatModelS = glGetUniformLocation(programIdS, "Model");
 	vec_resS = glGetUniformLocation(programIdS, "resolution");
 	loc_time = glGetUniformLocation(programIdS, "time");
-	//loc_speed = glGetUniformLocation(programIdS, "speed");
 
 	MatProjText = glGetUniformLocation(programId_text, "Projection_text");
 	text_color = glGetUniformLocation(programId_text, "textColor");
