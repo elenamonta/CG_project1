@@ -25,39 +25,34 @@ typedef struct {
 
 
 typedef struct {
-    // Identificatori OpenGL per la gestione della geometria e degli attributi
-    GLuint VAO;                // Vertex Array Object
-    GLuint VBO_vertices;       // Vertex Buffer Object per le coordinate dei vertici della curva
-    GLuint VBO_colors;         // Vertex Buffer Object per i colori dei vertici della curva
-    GLuint VBO_CP;             // Vertex Buffer Object per le coordinate dei control points
-    GLuint VBO_CP_colors;      // Vertex Buffer Object per i colori dei control points
-    GLuint VBO_TG;             // Vertex Buffer Object per le coordinate delle tangenti
-    GLuint VBO_TG_colors;      // Vertex Buffer Object per i colori delle tangenti
+    GLuint VAO;                
+    GLuint VBO_vertices;       
+    GLuint VBO_colors;         
+    GLuint VBO_CP;             
+    GLuint VBO_CP_colors;      
+    GLuint VBO_TG;             
+    GLuint VBO_TG_colors;      
 
 
-    std::vector<glm::vec3> vertices;  // Coordinate dei vertici della curva
-    std::vector<glm::vec4> colors;    // Colori dei vertici della curva
-    std::vector<glm::vec3> CP;        // Coordinate dei control points (punti di controllo)
-    std::vector<glm::vec4> colCP;     // Colori dei control points
-    std::vector<glm::vec3> tg;        // Coordinate dei vettori tangenti ai control points
-    std::vector<glm::vec4> col_tg;     // Colori dei vettori tangenti
+    std::vector<glm::vec3> vertices;  
+    std::vector<glm::vec4> colors;    
+    std::vector<glm::vec3> CP;        
+    std::vector<glm::vec4> colCP;     
+    std::vector<glm::vec3> tg;        
+    std::vector<glm::vec4> col_tg;    
     vec4 colorVertices;
-    // Parametri di interpolazione
-    std::vector<glm::vec3> Derivata;  // Vettore derivata (a cosa serve esattamente?)
-    std::vector<float> Tens;       // Tensore di tensione
-    std::vector<float> Bias;       // Bias
-    std::vector<float> Cont;       // Controllo (specificare meglio)
-
-    // Informazioni sulla curva
-    int nv;                     // Numero di vertici della curva
-    int ncp;                    // Numero di control points
-    int ntg;                    // Numero di vettori tangenti
-    glm::mat4 Model;            // Matrice di modellazione
+    std::vector<glm::vec3> Derivata;  
+    std::vector<float> Tens;       
+    std::vector<float> Bias;       
+    std::vector<float> Cont;       
+    int nv;                     
+    int ncp;                    
+    int ntg;                    
+    glm::mat4 Model;            
     vec2 position;
     vec3 scale;
-    // Parametri di rendering
-    int render;                // Modalità di rendering (linee, triangoli, ...)
-    unsigned int programId;    // Identificatore del programma shader
+    int render;                
+    unsigned int programId;    
     bool isalive;
     float timerFig;
     vec4 min_BB_obj;
@@ -68,10 +63,10 @@ typedef struct {
 
 typedef struct {
     unsigned int textureId;
-    glm::ivec2 size;
-    glm::ivec2 bearing;
-    glm::vec2 scale;
-    glm::vec3 color;
-    glm::vec2 position;
-    unsigned int advance;
+    glm::ivec2 size; //Dimensioni della bitmap del glifo
+    glm::ivec2 bearing; //Offset del glifo rispetto alla linea di base del testo
+    glm::vec2 scale; //fattore di scalatura
+    glm::vec3 color; //colore
+    glm::vec2 position; //posizione
+    unsigned int advance; //posizione del cursore
 }Glyph;

@@ -1,7 +1,6 @@
 #include "gestione_interazioni.h"
 
 
-extern Curva player;
 extern float direction; 
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
@@ -20,12 +19,6 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
         break; 
     case GLFW_KEY_LEFT:
         if (action == GLFW_PRESS) direction = -4.0f;
-        break;
-
-    case GLFW_KEY_SPACE: 
-         if (action == GLFW_PRESS && !player.isalive) { 
-             initShape(); 
-         }
         break;
 
     default:

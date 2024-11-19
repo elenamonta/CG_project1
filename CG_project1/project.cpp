@@ -34,17 +34,21 @@ map<char, Glyph> Characters;
 
 int main(void)
 {
+	//inizializza l'engine audio di irrKlang
 	ISoundEngine* engine = createIrrKlangDevice();
 
 	GLFWwindow* window;
 
+	//inizializza GLFW
 	if (!glfwInit()) return 1;
 
+	//configura opzioni del contesto OpenGL
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	glfwWindowHint(GLFW_DOUBLEBUFFER, GLFW_TRUE);
 
+	//crea la window
 	window = glfwCreateWindow(height, width, "Game", NULL, NULL);
 
 	if (!window)
@@ -65,10 +69,11 @@ int main(void)
 
 	glfwSetKeyCallback(window, key_callback);
 
+	//definisce la porzione di finestra in cui verrà disegnato OpenGL
 	glViewport(0, 0, width, height);
 	//glEnable(GL_CULL_FACE);
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glEnable(GL_BLEND); //abilita il blending
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); //configura la funzione di blending 
 
 	INIT_SHADER();
 
@@ -81,6 +86,7 @@ int main(void)
 	INIT_PIANO(&background);
 	INIT_VAO(&background);
 
+	//inizializzazione gli oggetti di gioco
 	initShape();
 
 
@@ -89,14 +95,18 @@ int main(void)
 	while (!glfwWindowShouldClose(window))
 	{
 		float currentFrame = glfwGetTime();
+		//converte il deltatime in millisecondi
 		deltaTime = (currentFrame - lastFrame)*1000;
 
+		//se il tempo trascorso è maggiore di 4 millisecondi aggiorna il game
+		//necessario per limitare il frame rate
 		if (deltaTime > frameCap) {
 			lastFrame = currentFrame;
 
 			int outOfBoundPlatformNum = 0;
 			int outOfBoundBouncNum = 0;
 
+			//aggiorna bounding box
 			updateBB_Curva(&player);
 			updateBB_Curva(&cap);
 
@@ -104,7 +114,7 @@ int main(void)
 				updateBB_Curva(&platforms[i]);
 			}
 
-
+			//se il player è in caduta, controlla le collisioni
 			if (velocity < 0) {
 				if (checkCollision_platform(player, platforms)) {
 					if (!checkCollision(player, platforms[0])) {
@@ -112,6 +122,7 @@ int main(void)
 					}
 					velocity = 8;
 					if (checkCollision_platform(player, bouncings)) {
+						//power up
 						velocity *= 2;
 						points += 20;
 
@@ -121,15 +132,14 @@ int main(void)
 					engine->play2D("media/jump.mp3", false);
 				}
 			}
-
+			//aggiorna la posizione del cappello in base al player
 			cap.position.x = player.position.x - 10.0;
 			cap.position.y = player.position.y - (cap.min_BB_obj.y * cap.scale.y - player.max_BB_obj.y * player.scale.y) - 20.0;
 
+			//aggiorna il player in base alle collisioni e agli input
 			updatePlayer(&player);
 			
-
-
-
+			//quando il player raggiunge la metà dello schermo crea nuove piattaforme e elimina quelle sottostanti al player
 			if (player.position.y >= height / 2) {
 				player.position.y -= velocity;
 				for (int j = 0; j < bouncings.size(); j++) {
@@ -152,7 +162,7 @@ int main(void)
 						outOfBoundPlatformNum++;
 					}
 				}
-
+				//elimina le piattaforme al di fuori della window 
 				while (outOfBoundPlatformNum > 0) {
 
 					highest = higher_platform(platforms);
@@ -213,15 +223,16 @@ int main(void)
 				RenderText(text, glyph);
 			}
 
-
+			//aggiorna la finestra
 			glfwSwapBuffers(window);
+			//gestione degli eventi da tastiera
 			glfwPollEvents();
 
 		}
 	}
 
 
-
+	//dealloco le risorse
 	glDeleteProgram(programId);
 	glDeleteProgram(programIdS);
 	glDeleteBuffers(1, &background.VBO_vertices);

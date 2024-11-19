@@ -16,7 +16,7 @@ extern Curva player, molla, cap;
 extern vector<Curva> platforms, bouncings;
 extern map<char, Glyph> Characters;
 
-
+//rendering background
 void render(float currentFrame)
 {
 	glClearColor(r, g, b, 1.0f);
@@ -37,6 +37,7 @@ void render(float currentFrame)
 
 }
 
+//rendering della struttura curva
 void renderCurva() {
 
     for (int i = 0; i < platforms.size(); i++) {
@@ -91,6 +92,7 @@ void renderCurva() {
 }
 
 void RenderText(const std::string& text, Glyph glyph) {
+    //impostazione degli shader per il testo
     glUseProgram(programId_text);
     glUniformMatrix4fv(MatProjText, 1, GL_FALSE, glm::value_ptr(Projection));
 
@@ -98,6 +100,7 @@ void RenderText(const std::string& text, Glyph glyph) {
     glActiveTexture(GL_TEXTURE0);
     glBindVertexArray(VAO_Text);
 
+    //calcolo della larghezza del testo per centrare la posizione del testo
     float textWidth = 0.0f;
     for (auto c = text.begin(); c != text.end(); c++) {
         Glyph ch = Characters[*c];
@@ -106,6 +109,7 @@ void RenderText(const std::string& text, Glyph glyph) {
 
     glyph.position.x -= textWidth / 2.0f;
 
+    //leggo la stringa, memorizzo per ogni carattere il glifo associato
     for (auto c = text.begin(); c != text.end(); c++) {
         Glyph ch = Characters[*c];
 
@@ -115,23 +119,27 @@ void RenderText(const std::string& text, Glyph glyph) {
         float w = ch.size.x * glyph.scale.x;
         float h = ch.size.y * glyph.scale.y;
 
+        //glifo rappresentato come rettangolo (formato da due triangoli) 
         float vertices[6][4] = {
+            //vertici secondo triangolo
             { xpos,     ypos + h,   0.0f, 0.0f },
             { xpos,     ypos,       0.0f, 1.0f },
             { xpos + w, ypos,       1.0f, 1.0f },
-
+            //vertici primo triangolo
             { xpos,     ypos + h,   0.0f, 0.0f },
             { xpos + w, ypos,       1.0f, 1.0f },
             { xpos + w, ypos + h,   1.0f, 0.0f }
         };
 
         glBindTexture(GL_TEXTURE_2D, ch.textureId);
+        //aggiorniamo il contenuto del VBO
         glBindBuffer(GL_ARRAY_BUFFER, VBO_Text);
         glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
         glBindBuffer(GL_ARRAY_BUFFER, 0);
 
         glDrawArrays(GL_TRIANGLES, 0, 6);
 
+        //avanzo il cursore 
         glyph.position.x += (ch.advance >> 6) * glyph.scale.x; // Avanza alla prossima posizione
     }
 

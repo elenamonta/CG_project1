@@ -34,6 +34,7 @@ void initShape() {
 		platform.programId = programId;
 		platform.scale = vec3(20.0, 20.0, 20.0);
 		INIT_FORMA(&platform, "platform_punte.txt", GL_TRIANGLE_FAN);
+		//tranne la prima piattaforma genera le piattaforme randomicamente
 		if (i == 0) {
 			platform.position.y = player.position.y - (((player.max_BB_obj.y - player.min_BB_obj.y) / 2) * player.scale.y) - (((platform.max_BB_obj.y - platform.min_BB_obj.y) / 2) * platform.scale.y);
 			platform.position.x = player.position.x;
@@ -50,14 +51,16 @@ void initShape() {
 	glyph.position.x = 70.0;
 	glyph.position.y = 650.0;
 	glyph.color = vec3(1.0f, 1.0f, 1.0f);
+	//carico il font specificando il percorso
 	LoadFonts("C:/Windows/Fonts/Inkfree.ttf", 80);
 	INIT_VAO_Text();
 
 
-
+	//matrice di proiezione ortografica
 	Projection = ortho(0.0f, float(width), 0.0f, float(height));
 	resolution = vec2(float(height), float(width));
 
+	//ottengo uniform dagli shader
 	MatProj = glGetUniformLocation(programId, "Projection");
 	MatModel = glGetUniformLocation(programId, "Model");
 

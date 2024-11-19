@@ -10,21 +10,7 @@ extern int width, height;
 extern float direction, velocity;
 extern map<char, Glyph> Characters;
 
-vec2 randomPosition() {
-    static std::random_device rd;
-    static std::mt19937 gen(rd());
-    std::uniform_real_distribution<> disX(0.0f, static_cast<float>(width));
-    std::uniform_real_distribution<> disY(0.0f, static_cast<float>(height));
-    return glm::vec2(disX(gen), disY(gen));
-}
-
-int generateRand() {
-    static std::random_device rd;
-    static std::mt19937 gen(rd());
-    std::uniform_int_distribution<int> disX(0, 9);
-    return disX(gen);
-}
-
+//per la creazione delle piattaforme in maniera randomica
 float randomx(Curva platform) {
     static std::random_device rd;
     static std::mt19937 gen(rd());
@@ -141,13 +127,17 @@ void updateBB_Curva(Curva* fig) {
 }
 
 bool outOfBound(Curva obj) {
-    return /*obj.min_BB.y >= height ||*/ obj.max_BB.y <= 0.0; 
+    return obj.max_BB.y <= 0.0; 
 }
 
 void updatePlayer(Curva * player) {
-    velocity -= 0.1f; 
+    velocity -= 0.1f; //simula l'effetto della gravità
+    //movimento orizzontale impostata di conseguenza all'input della tastiera
     player->position.x += direction; 
+    //movimento verticale influenzata dalla gravità e da eventuali collisioni
     player->position.y += velocity;
+
+    //controllo dei limiti orizzontali
     if (player->max_BB.x > width + 1) {
         player->position.x = width - ((player->max_BB.x - player->min_BB.x) / 2);
     }
@@ -155,11 +145,14 @@ void updatePlayer(Curva * player) {
         player->position.x = (player->max_BB.x - player->min_BB.x) / 2;
     }
     updateBB_Curva(player);
+
+    //controllo limiti verticali
     if (player->min_BB.y < 0) {
         player->isalive = false;
     } 
 }
 
+//restituisce la posizione della piattaforma più alta
 Curva higher_platform(vector<Curva> platforms) {
     Curva higher = {};
     higher.position.x = 0.0; 
@@ -173,28 +166,36 @@ Curva higher_platform(vector<Curva> platforms) {
 }
 
 void LoadFonts(const std::string& fontPath, unsigned int fontSize) {
+    //inizializzazione FreeType
     FT_Library ft;
     if (FT_Init_FreeType(&ft)) {
         std::cerr << "Impossibile inizializzare FreeType Library" << std::endl;
         return;
     }
 
+    //crea face del font
     FT_Face face;
     if (FT_New_Face(ft, fontPath.c_str(), 0, &face)) {
         std::cerr << "Impossibile caricare il font" << std::endl;
         return;
     }
-
+    //Imposta la dimensione del font in pixel
     FT_Set_Pixel_Sizes(face, 0, fontSize); 
 
+
+    //Configura l'allineamento dei pixel per il caricamento delle texture.
+    //Evita problemi di allineamento per immagini non multiple di 4 byte
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
     for (unsigned char c = 0; c < 128; c++) {
+        //carica il glifo
+        //il flag FT_LOAD_RENDER dice a FreeType di generare un immagine bitmap
         if (FT_Load_Char(face, c, FT_LOAD_RENDER)) {
             std::cerr << "Impossibile caricare il glifo per il carattere " << c << std::endl;
             continue;
         }
 
+        //genero una texture per ogni glifo
         unsigned int texture;
         glGenTextures(1, &texture);
         glBindTexture(GL_TEXTURE_2D, texture);
@@ -215,7 +216,7 @@ void LoadFonts(const std::string& fontPath, unsigned int fontSize) {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-
+        //memorizza il carattere per la fase di render
         Glyph glyph = {};
         glyph.textureId = texture;
         glyph.size = glm::ivec2(face->glyph->bitmap.width, face->glyph->bitmap.rows);
@@ -225,6 +226,7 @@ void LoadFonts(const std::string& fontPath, unsigned int fontSize) {
         Characters.insert(std::pair<char, Glyph>(c, glyph));
     }
 
+    //libero la memoria
     FT_Done_Face(face);
     FT_Done_FreeType(ft);
 }
